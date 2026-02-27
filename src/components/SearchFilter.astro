@@ -1,0 +1,220 @@
+---
+import { Search, UtensilsCrossed } from '@lucide/astro';
+
+interface Props {
+  tags: string[];
+  totalRecipes: number;
+}
+
+const { tags, totalRecipes } = Astro.props;
+---
+
+<section
+  class="no-print bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-8"
+  aria-label="Buscar y filtrar recetas"
+>
+  <!-- Search input -->
+  <div class="mb-5">
+    <label
+      for="search-input"
+      class="block text-base font-semibold text-[var(--color-earth-900)] mb-2"
+    >
+      Buscar recetas
+    </label>
+    <div class="relative">
+      <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none">
+        <Search size={18} aria-hidden="true" />
+      </span>
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Tortilla, gazpacho, cocido..."
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        class="w-full pl-11 pr-4 py-3 text-base border-2 border-stone-200 rounded-xl bg-[var(--color-cream-50)] text-[var(--color-earth-900)] placeholder-stone-400 transition-colors"
+        style="min-height: var(--min-touch-target);"
+        aria-label="Buscar recetas por nombre o descripción"
+        aria-controls="recipes-grid"
+        aria-autocomplete="list"
+      />
+    </div>
+  </div>
+
+  <!-- Tag filters -->
+  {tags.length > 0 && (
+    <div>
+      <p
+        class="text-base font-semibold text-[var(--color-earth-900)] mb-3"
+        id="tags-label"
+      >
+        Filtrar por etiqueta
+      </p>
+      <div
+        class="flex flex-wrap gap-2"
+        role="group"
+        aria-labelledby="tags-label"
+        id="tag-filters"
+      >
+        {tags.map((tag) => (
+          <button
+            type="button"
+            class="tag-pill"
+            data-tag={tag.toLowerCase()}
+            aria-pressed="false"
+            aria-label={`Filtrar por ${tag}`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="mt-5 flex items-center justify-between flex-wrap gap-3">
+    <p
+      class="text-sm text-stone-500"
+      aria-live="polite"
+      aria-atomic="true"
+      id="results-count"
+    >
+      {totalRecipes} receta{totalRecipes !== 1 ? 's' : ''} disponible{totalRecipes !== 1 ? 's' : ''}
+    </p>
+
+    <button
+      type="button"
+      id="clear-filters"
+      class="hidden px-4 py-2 rounded-xl text-sm font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+      style="min-height: var(--min-touch-target);"
+      aria-label="Limpiar todos los filtros"
+    >
+      Limpiar filtros
+    </button>
+  </div>
+</section>
+
+<script>
+  // This runs only in the browser. The server renders all cards;
+  // JS progressively enhances with search and tag filtering.
+
+  const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+  const tagButtons = document.querySelectorAll<HTMLButtonElement>('[data-tag]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-recipe]');
+  const resultsCount = document.getElementById('results-count');
+  const clearBtn = document.getElementById('clear-filters') as HTMLButtonElement | null;
+  const grid = document.getElementById('recipes-grid');
+
+  // "No results" placeholder (injected once)
+  let noResultsEl: HTMLElement | null = null;
+
+  function getNoResultsEl(): HTMLElement {
+    if (!noResultsEl) {
+      noResultsEl = document.createElement('div');
+      noResultsEl.id = 'no-results-msg';
+      noResultsEl.className = 'col-span-full text-center py-16';
+      noResultsEl.setAttribute('role', 'status');
+      noResultsEl.setAttribute('aria-live', 'polite');
+      noResultsEl.innerHTML = `
+        <div class="flex justify-center mb-4 text-stone-300">
+          <UtensilsCrossed size={56} aria-label="nada encontrado" stroke-width={1} />
+        </div>
+        <p class="text-xl font-semibold text-stone-600">No hay recetas que coincidan</p>
+        <p class="text-base text-stone-400 mt-1">Prueba con otros términos o etiquetas</p>
+      `;
+    }
+    return noResultsEl;
+  }
+
+  let selectedTags: Set<string> = new Set();
+  let searchQuery = '';
+
+  function normalize(str: string): string {
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function filterRecipes() {
+    const normQuery = normalize(searchQuery.trim());
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const titleData = normalize(card.dataset.title ?? '');
+      const descData = normalize(card.dataset.description ?? '');
+      const tagsData = normalize(card.dataset.tags ?? '').split(' ');
+
+      const matchesSearch =
+        normQuery === '' ||
+        titleData.includes(normQuery) ||
+        descData.includes(normQuery) ||
+        tagsData.some((t) => t.includes(normQuery));
+
+      const matchesTags =
+        selectedTags.size === 0 ||
+        [...selectedTags].some((selected) =>
+          tagsData.includes(normalize(selected))
+        );
+
+      const visible = matchesSearch && matchesTags;
+      card.hidden = !visible;
+      if (visible) visibleCount++;
+    });
+
+    // Update results count (screen-reader friendly)
+    if (resultsCount) {
+      resultsCount.textContent =
+        visibleCount === 0
+          ? 'No se encontraron recetas'
+          : `${visibleCount} receta${visibleCount !== 1 ? 's' : ''} encontrada${visibleCount !== 1 ? 's' : ''}`;
+    }
+
+    // Show/hide "no results" message
+    if (grid) {
+      const noResults = getNoResultsEl();
+      if (visibleCount === 0) {
+        if (!noResults.parentElement) grid.appendChild(noResults);
+      } else {
+        noResults.remove();
+      }
+    }
+
+    // Show/hide clear button
+    const hasFilters = selectedTags.size > 0 || searchQuery.trim() !== '';
+    if (clearBtn) {
+      clearBtn.classList.toggle('hidden', !hasFilters);
+    }
+  }
+
+  searchInput?.addEventListener('input', (e) => {
+    searchQuery = (e.target as HTMLInputElement).value;
+    filterRecipes();
+  });
+
+  tagButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag ?? '';
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+        btn.setAttribute('aria-pressed', 'false');
+        btn.classList.remove('active');
+      } else {
+        selectedTags.add(tag);
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.add('active');
+      }
+      filterRecipes();
+    });
+  });
+
+  clearBtn?.addEventListener('click', () => {
+    selectedTags.clear();
+    searchQuery = '';
+    if (searchInput) searchInput.value = '';
+    tagButtons.forEach((btn) => {
+      btn.setAttribute('aria-pressed', 'false');
+      btn.classList.remove('active');
+    });
+    filterRecipes();
+  });
+</script>

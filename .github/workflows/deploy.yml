@@ -1,0 +1,46 @@
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    name: Build y Despliegue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build del sitio estático
+        run: npm run build
+        env:
+          SITE_URL: ${{ vars.CUSTOM_DOMAIN != '' && format('https://{0}', vars.CUSTOM_DOMAIN) || format('https://{0}.github.io', github.repository_owner) }}
+          BASE_PATH: ${{ vars.CUSTOM_DOMAIN != '' && '/' || format('/{0}', github.event.repository.name) }}
+
+      - name: Publicar en branch deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: deploy
+          cname: ${{ vars.CUSTOM_DOMAIN }}
+          force_orphan: true
+          enable_jekyll: false
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: "deploy: build desde ${{ github.sha }}"

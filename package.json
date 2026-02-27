@@ -1,0 +1,23 @@
+{
+  "name": "recetas-de-abuela",
+  "version": "1.0.0",
+  "description": "Recetas tradicionales de abuelas españolas. Preservando la memoria histórica culinaria.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@lucide/astro": "^0.575.0",
+    "@tailwindcss/typography": "0.5.19",
+    "@tailwindcss/vite": "4.2.1",
+    "astro": "5.18.0",
+    "tailwindcss": "4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "25.3.2"
+  }
+}

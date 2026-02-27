@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { UtensilsCrossed } from '@lucide/astro';
+---
+
+<Layout title="Página no encontrada" description="La página que buscas no existe.">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="flex justify-center mb-6 text-stone-300">
+      <UtensilsCrossed size={80} aria-label="receta no encontrada" stroke-width={1} />
+    </div>
+    <h1
+      class="text-3xl font-bold text-[var(--color-earth-900)] mb-4"
+      style="font-family: var(--font-serif);"
+    >
+      Página no encontrada
+    </h1>
+    <p class="text-lg text-stone-500 mb-8 leading-relaxed">
+      Parece que esta receta se perdió en algún rincón de la cocina.
+      No te preocupes, tenemos muchas otras esperándote.
+    </p>
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white font-semibold text-lg transition-colors"
+      style="min-height: var(--min-touch-target);"
+    >
+      Volver a las recetas
+    </a>
+  </div>
+</Layout>

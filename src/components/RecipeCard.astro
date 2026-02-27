@@ -1,0 +1,130 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { UtensilsCrossed, Timer, MapPin, ChefHat } from '@lucide/astro';
+
+interface Props {
+  recipe: CollectionEntry<'recipes'>;
+  cookName?: string;
+}
+
+const { recipe, cookName } = Astro.props;
+const { title, description, tags, prep_time, total_time, difficulty, image, image_alt, region } = recipe.data;
+
+const difficultyColors: Record<string, string> = {
+  'fácil': 'bg-green-100 text-green-800',
+  'media': 'bg-amber-100 text-amber-800',
+  'difícil': 'bg-red-100 text-red-800',
+};
+
+const difficultyColor = difficultyColors[difficulty] ?? 'bg-stone-100 text-stone-700';
+const displayTime = total_time ?? prep_time;
+---
+
+<article
+  class="recipe-card group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border border-stone-100"
+  data-recipe
+  data-tags={tags.join(' ').toLowerCase()}
+  data-title={title.toLowerCase()}
+  data-description={description.toLowerCase()}
+  aria-label={`Receta: ${title}`}
+>
+  <!-- Image -->
+  <a
+    href={`/recetas/${recipe.slug}`}
+    class="block overflow-hidden aspect-[4/3] bg-[var(--color-cream-100)]"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    {image ? (
+      <img
+        src={image}
+        alt={image_alt ?? title}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height="300"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--color-cream-100)] to-[var(--color-terracotta-100)] text-[var(--color-terracotta-200)]">
+        <UtensilsCrossed size={64} aria-label="receta sin imagen" stroke-width={1} />
+      </div>
+    )}
+  </a>
+
+  <!-- Content -->
+  <div class="flex flex-col flex-1 p-5 gap-3">
+
+    <!-- Tags row -->
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-1.5" aria-label="Etiquetas">
+        {tags.slice(0, 4).map((tag) => (
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-cream-100)] text-[var(--color-earth-800)]">
+            {tag}
+          </span>
+        ))}
+        {tags.length > 4 && (
+          <span class="text-xs font-medium px-2 py-1 text-stone-400">
+            +{tags.length - 4}
+          </span>
+        )}
+      </div>
+    )}
+
+    <!-- Title -->
+    <h2 class="text-xl font-bold leading-snug" style="font-family: var(--font-serif);">
+      <a
+        href={`/recetas/${recipe.slug}`}
+        class="text-[var(--color-earth-900)] hover:text-[var(--color-terracotta-600)] transition-colors"
+      >
+        {title}
+      </a>
+    </h2>
+
+    <p class="text-sm text-stone-600 leading-relaxed line-clamp-3 flex-1">
+      {description}
+    </p>
+
+    <div
+      class="flex items-center flex-wrap gap-3 text-sm pt-3 border-t border-stone-100"
+      aria-label="Información de la receta"
+    >
+      {displayTime && (
+        <span class="flex items-center gap-1.5 text-stone-500" aria-label={`Tiempo: ${displayTime}`}>
+          <Timer size={14} aria-hidden="true" />
+          <span>{displayTime}</span>
+        </span>
+      )}
+
+      <span
+        class={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${difficultyColor}`}
+        aria-label={`Dificultad: ${difficulty}`}
+      >
+        {difficulty}
+      </span>
+
+      {region && (
+        <span class="flex items-center gap-1.5 text-stone-500" aria-label={`Región: ${region}`}>
+          <MapPin size={14} aria-hidden="true" />
+          <span>{region}</span>
+        </span>
+      )}
+
+      {cookName && (
+        <span class="ml-auto flex items-center gap-1.5 text-stone-500 text-xs">
+          <ChefHat size={14} aria-hidden="true" />
+          <span>{cookName}</span>
+        </span>
+      )}
+    </div>
+
+    <a
+      href={`/recetas/${recipe.slug}`}
+      class="mt-1 w-full text-center py-3 px-4 rounded-xl bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white font-semibold text-base transition-colors"
+      style="min-height: var(--min-touch-target);"
+      aria-label={`Ver receta de ${title}`}
+    >
+      Ver receta
+    </a>
+  </div>
+</article>

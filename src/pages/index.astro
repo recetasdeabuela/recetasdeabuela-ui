@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import SearchFilter from '../components/SearchFilter.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+const allRecipes = await getCollection('recipes');
+
+// Sort: featured first, then by date descending
+const sortedRecipes = allRecipes.sort((a, b) => {
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
+  const dateA = a.data.date?.getTime() ?? 0;
+  const dateB = b.data.date?.getTime() ?? 0;
+  return dateB - dateA;
+});
+
+// All unique tags, sorted alphabetically
+const allTags = [...new Set(allRecipes.flatMap((r) => r.data.tags))].sort(
+  (a, b) => a.localeCompare(b, 'es')
+);
+
+// Fetch cook names for all recipes
+const recipesWithCooks = await Promise.all(
+  sortedRecipes.map(async (recipe) => {
+    let cookName: string | undefined;
+    if (recipe.data.cook_id) {
+      const cook = await getEntry('cooks', recipe.data.cook_id);
+      cookName = cook?.data.name;
+    }
+    return { recipe, cookName };
+  })
+);
+---
+
+<Layout title="Recetas de Abuela" description="Descubre las recetas tradicionales de abuelas españolas. Un archivo vivo de la cocina casera de España, con recetas auténticas transmitidas de generación en generación.">
+
+  <section
+    class="relative bg-[var(--color-earth-900)] text-white overflow-hidden"
+    aria-label="Bienvenida"
+  >
+    <!-- Decorative background pattern -->
+    <div class="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
+      <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, white 0, white 1px, transparent 0, transparent 50%); background-size: 20px 20px;"></div>
+    </div>
+
+    <div class="relative max-w-5xl mx-auto px-4 py-16 text-center">
+      <p class="text-amber-300 text-sm font-semibold tracking-widest uppercase mb-3">
+        Memoria culinaria de España
+      </p>
+      <h1
+        class="text-4xl md:text-5xl font-bold leading-tight mb-4"
+        style="font-family: var(--font-serif);"
+      >
+        Las recetas de nuestras abuelas
+      </h1>
+      <p class="text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
+        Un archivo vivo de la cocina casera española. Recetas auténticas,
+        transmitidas de generación en generación, preservadas para que no se pierdan.
+      </p>
+
+      <!-- Stats -->
+      <div
+        class="mt-10 flex justify-center gap-10 flex-wrap"
+        aria-label="Estadísticas del archivo"
+      >
+        <div class="text-center">
+          <span class="block text-3xl font-bold text-amber-300">
+            {allRecipes.length}
+          </span>
+          <span class="text-sm text-stone-400">
+            Receta{allRecipes.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+        <div class="text-center">
+          <span class="block text-3xl font-bold text-amber-300">
+            {allTags.length}
+          </span>
+          <span class="text-sm text-stone-400">Etiquetas</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Search & filter -->
+    <SearchFilter tags={allTags} totalRecipes={allRecipes.length} />
+
+    <!-- Recipe grid -->
+    <div
+      id="recipes-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      aria-label="Listado de recetas"
+      aria-live="polite"
+    >
+      {recipesWithCooks.map(({ recipe, cookName }) => (
+        <RecipeCard recipe={recipe} cookName={cookName} />
+      ))}
+    </div>
+
+  </div>
+</Layout>

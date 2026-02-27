@@ -1,0 +1,68 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { UserCircle, MapPin } from '@lucide/astro';
+
+interface Props {
+  cook: CollectionEntry<'cooks'>;
+}
+
+const { cook } = Astro.props;
+const { name, origin, region, bio, picture_profile_link, born } = cook.data;
+---
+
+<aside
+  class="bg-[var(--color-cream-50)] border border-[var(--color-cream-200)] rounded-2xl p-6 flex flex-col gap-4"
+  aria-label={`Sobre la cocinera: ${name}`}
+>
+  <h2
+    class="text-lg font-bold text-[var(--color-earth-900)] border-b-2 border-[var(--color-cream-200)] pb-3"
+    style="font-family: var(--font-serif);"
+  >
+    Sobre la cocinera
+  </h2>
+
+  <div class="flex items-start gap-4">
+    {picture_profile_link ? (
+      <img
+        src={picture_profile_link}
+        alt={`Fotografía de ${name}`}
+        class="w-20 h-20 rounded-full object-cover ring-4 ring-[var(--color-terracotta-100)] flex-shrink-0"
+        loading="lazy"
+        width="80"
+        height="80"
+      />
+    ) : (
+      <div
+        class="w-20 h-20 rounded-full bg-[var(--color-terracotta-100)] flex items-center justify-center flex-shrink-0 text-[var(--color-terracotta-400)]"
+        aria-label={`Avatar de ${name}`}
+      >
+        <UserCircle size={48} aria-hidden="true" />
+      </div>
+    )}
+
+    <div class="min-w-0">
+      <p class="font-bold text-lg text-[var(--color-earth-900)] leading-tight">
+        {name}
+      </p>
+
+      <p class="text-sm text-stone-500 mt-1 flex items-center gap-1">
+        <MapPin size={13} aria-hidden="true" class="flex-shrink-0" />
+        <span>
+          {region ? `${origin}, ${region}` : origin}
+        </span>
+      </p>
+
+      {born && (
+        <p class="text-sm text-stone-400 mt-0.5">
+          Nacida en {born}
+        </p>
+      )}
+    </div>
+  </div>
+
+  {bio && (
+    <p class="text-sm text-stone-600 leading-relaxed italic border-l-4 border-[var(--color-terracotta-200)] pl-4">
+      {bio}
+    </p>
+  )}
+</aside>

@@ -1,0 +1,269 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CookProfile from '../../components/CookProfile.astro';
+import { Clock, Flame, Users, BarChart2, MapPin, Calendar, Printer } from '@lucide/astro';
+import { getCollection, getEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const recipes = await getCollection('recipes');
+  return recipes.map((recipe) => ({
+    params: { slug: recipe.slug },
+    props: { recipe },
+  }));
+}
+
+interface Props {
+  recipe: CollectionEntry<'recipes'>;
+}
+
+const { recipe } = Astro.props;
+const { Content } = await recipe.render();
+
+const {
+  title,
+  description,
+  cook_id,
+  tags,
+  servings,
+  prep_time,
+  cook_time,
+  total_time,
+  difficulty,
+  image,
+  image_alt,
+  region,
+  date,
+  ingredients,
+} = recipe.data;
+
+const cook = cook_id ? await getEntry('cooks', cook_id) : null;
+
+const siteBase = Astro.site ?? new URL('http://localhost:4321');
+function toAbsoluteUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return new URL(url, siteBase).toString();
+}
+const absoluteImage = toAbsoluteUrl(image);
+
+function toISO8601Duration(timeStr: string | undefined): string | undefined {
+  if (!timeStr) return undefined;
+  const s = timeStr.toLowerCase();
+  const hours = parseInt(s.match(/(\d+)\s*hora[s]?/)?.[1] ?? '0');
+  const mins  = parseInt(s.match(/(\d+)\s*min/)?.[1]        ?? '0');
+  if (!hours && !mins) return undefined;
+  return `PT${hours ? `${hours}H` : ''}${mins ? `${mins}M` : ''}`;
+}
+
+const recipeJsonLd: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Recipe',
+  name: title,
+  description,
+  inLanguage: 'es-ES',
+  ...(absoluteImage && {
+    image: {
+      '@type': 'ImageObject',
+      url: absoluteImage,
+      width: 1200,
+      height: 630,
+    },
+  }),
+  ...(cook && {
+    author: {
+      '@type': 'Person',
+      name: cook.data.name,
+    },
+  }),
+  ...(date && { datePublished: date.toISOString().split('T')[0] }),
+  ...(toISO8601Duration(prep_time)   && { prepTime:   toISO8601Duration(prep_time) }),
+  ...(toISO8601Duration(cook_time)   && { cookTime:   toISO8601Duration(cook_time) }),
+  ...(toISO8601Duration(total_time)  && { totalTime:  toISO8601Duration(total_time) }),
+  ...(servings && { recipeYield: `${servings} personas` }),
+  ...(region && { recipeCuisine: region }),
+  ...(ingredients?.length && { recipeIngredient: ingredients }),
+  ...(tags.length && { keywords: tags.join(', ') }),
+};
+
+const difficultyColors: Record<string, string> = {
+  'fácil':   'bg-green-100 text-green-800 ring-1 ring-green-200',
+  'media':   'bg-amber-100 text-amber-800 ring-1 ring-amber-200',
+  'difícil': 'bg-red-100 text-red-800 ring-1 ring-red-200',
+};
+const difficultyColor = difficultyColors[difficulty] ?? 'bg-stone-100 text-stone-700';
+
+const formattedDate = date
+  ? new Intl.DateTimeFormat('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }).format(date)
+  : null;
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={image}
+  imageAlt={image_alt}
+  type="article"
+  jsonLd={recipeJsonLd}
+>
+  <nav
+    class="max-w-5xl mx-auto px-4 pt-6 pb-2"
+    aria-label="Ruta de navegación"
+  >
+    <ol class="flex items-center gap-2 text-sm text-stone-500 list-none p-0 m-0 flex-wrap">
+      <li>
+        <a href="/" class="hover:text-[var(--color-terracotta-600)] transition-colors font-medium">
+          Recetas
+        </a>
+      </li>
+      <li aria-hidden="true" class="text-stone-300">/</li>
+      <li class="text-[var(--color-earth-900)] font-medium truncate max-w-xs" aria-current="page">
+        {title}
+      </li>
+    </ol>
+  </nav>
+
+  <article class="max-w-5xl mx-auto px-4 pb-16" aria-label={`Receta: ${title}`}>
+
+    {image && (
+      <div class="rounded-2xl overflow-hidden mb-8 aspect-[16/7] bg-[var(--color-cream-100)]">
+        <img
+          src={image}
+          alt={image_alt ?? title}
+          class="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          width="1024"
+          height="448"
+        />
+      </div>
+    )}
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
+
+      <div>
+
+        <!-- Title and meta -->
+        <header class="mb-8">
+          <h1
+            class="text-3xl md:text-4xl font-bold text-[var(--color-earth-900)] leading-tight mb-3"
+            style="font-family: var(--font-serif);"
+          >
+            {title}
+          </h1>
+          <p class="text-lg text-stone-600 leading-relaxed mb-5">
+            {description}
+          </p>
+
+          <!-- Metadata grid -->
+          <div
+            class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[var(--color-cream-50)] border border-[var(--color-cream-200)] rounded-xl p-4"
+            aria-label="Detalles de la receta"
+          >
+            {prep_time && (
+              <div class="text-center">
+                <div class="flex justify-center mb-1 text-stone-400"><Clock size={20} aria-hidden="true" /></div>
+                <span class="block text-xs text-stone-400 mt-0.5">Preparación</span>
+                <span class="block text-sm font-semibold text-[var(--color-earth-900)]">{prep_time}</span>
+              </div>
+            )}
+            {cook_time && (
+              <div class="text-center">
+                <div class="flex justify-center mb-1 text-stone-400"><Flame size={20} aria-hidden="true" /></div>
+                <span class="block text-xs text-stone-400 mt-0.5">Cocción</span>
+                <span class="block text-sm font-semibold text-[var(--color-earth-900)]">{cook_time}</span>
+              </div>
+            )}
+            {servings && (
+              <div class="text-center">
+                <div class="flex justify-center mb-1 text-stone-400"><Users size={20} aria-hidden="true" /></div>
+                <span class="block text-xs text-stone-400 mt-0.5">Raciones</span>
+                <span class="block text-sm font-semibold text-[var(--color-earth-900)]">{servings} personas</span>
+              </div>
+            )}
+            <div class="text-center">
+              <div class="flex justify-center mb-1 text-stone-400"><BarChart2 size={20} aria-hidden="true" /></div>
+              <span class="block text-xs text-stone-400 mt-0.5">Dificultad</span>
+              <span class={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5 ${difficultyColor}`}>
+                {difficulty}
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Recipe content from Markdown -->
+        <div class="prose prose-lg max-w-none">
+          <Content />
+        </div>
+
+        <!-- Tags -->
+        {tags.length > 0 && (
+          <div class="mt-10 pt-6 border-t border-stone-100">
+            <p class="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3">
+              Etiquetas
+            </p>
+            <div class="flex flex-wrap gap-2" role="list" aria-label="Etiquetas de la receta">
+              {tags.map((tag) => (
+                <a
+                  href={`/?tag=${encodeURIComponent(tag)}`}
+                  class="tag-pill text-sm"
+                  role="listitem"
+                  aria-label={`Ver más recetas con la etiqueta ${tag}`}
+                >
+                  {tag}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Footer meta -->
+        <div class="mt-8 flex items-center flex-wrap gap-4 text-sm text-stone-400">
+          {region && (
+            <span class="flex items-center gap-1.5">
+              <MapPin size={14} aria-hidden="true" />
+              {region}
+            </span>
+          )}
+          {formattedDate && (
+            <time datetime={date?.toISOString()} class="flex items-center gap-1.5">
+              <Calendar size={14} aria-hidden="true" />
+              Publicado el {formattedDate}
+            </time>
+          )}
+        </div>
+
+        <!-- Back link (large touch target) -->
+        <div class="mt-10 no-print">
+          <a
+            href="/"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold transition-colors"
+            style="min-height: var(--min-touch-target);"
+          >
+            <span aria-hidden="true">←</span>
+            Volver a todas las recetas
+          </a>
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-6" aria-label="Información adicional">
+
+        {cook && <CookProfile cook={cook} />}
+
+        <!-- Print button -->
+        <button
+          type="button"
+          onclick="window.print()"
+          class="no-print w-full py-3 px-4 rounded-xl border-2 border-stone-200 hover:border-[var(--color-terracotta-500)] text-stone-600 hover:text-[var(--color-terracotta-600)] font-semibold transition-colors flex items-center justify-center gap-2"
+          style="min-height: var(--min-touch-target);"
+          aria-label="Imprimir esta receta"
+        >
+          <Printer size={18} aria-hidden="true" />
+          Imprimir receta
+        </button>
+
+      </aside>
+
+    </div>
+  </article>
+</Layout>
