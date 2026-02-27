@@ -29,8 +29,8 @@ jobs:
       - name: Build del sitio estático
         run: npm run build
         env:
-          SITE_URL: ${{ vars.CUSTOM_DOMAIN != '' && format('https://{0}', vars.CUSTOM_DOMAIN) || format('https://{0}.github.io', github.repository_owner) }}
-          BASE_PATH: ${{ vars.CUSTOM_DOMAIN != '' && '/' || format('/{0}', github.event.repository.name) }}
+          SITE_URL: ${{ vars.CUSTOM_DOMAIN && format('https://{0}', vars.CUSTOM_DOMAIN) || format('https://{0}.github.io', github.repository_owner) }}
+          BASE_PATH: ${{ vars.CUSTOM_DOMAIN && '/' || format('/{0}', github.event.repository.name) }}
 
       - name: Publicar en branch deploy
         uses: peaceiris/actions-gh-pages@v4
