@@ -196,6 +196,8 @@ Definidos en `src/styles/global.css` con `@theme` de Tailwind v4:
 
 ## Despliegue en GitHub Pages
 
+**Dominio oficial:** [https://recetasdeabuela.es/](https://recetasdeabuela.es/)
+
 ### Arquitectura del pipeline
 
 ```
