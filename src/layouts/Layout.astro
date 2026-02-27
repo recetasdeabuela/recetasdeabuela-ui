@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { UtensilsCrossed, Mic, Heart } from '@lucide/astro';
+import { UtensilsCrossed, Mic, Heart, Menu, X } from '@lucide/astro';
 
 interface Props {
   title: string;
@@ -121,38 +121,129 @@ const websiteJsonLd = {
         banner?.classList.add('hidden');
         sessionStorage.setItem('devBannerClosed', '1');
       });
+
+      const menuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const openIcon = document.getElementById('menu-icon-open');
+      const closeIcon = document.getElementById('menu-icon-close');
+      const mobileLinks = mobileMenu?.querySelectorAll('a');
+
+      function toggleMenu() {
+        const isExpanded = menuButton?.getAttribute('aria-expanded') === 'true';
+        menuButton?.setAttribute('aria-expanded', (!isExpanded).toString());
+        mobileMenu?.classList.toggle('hidden');
+        openIcon?.classList.toggle('hidden');
+        closeIcon?.classList.toggle('hidden');
+        
+        if (!isExpanded) {
+          document.body.style.overflow = 'hidden'; // Evita scroll al estar abierto
+        } else {
+          document.body.style.overflow = '';
+        }
+      }
+
+      menuButton?.addEventListener('click', toggleMenu);
+
+      // Cerrar menú al hacer clic en un enlace (importante para SPAs o anchors)
+      mobileLinks?.forEach(link => {
+        link.addEventListener('click', () => {
+          if (!mobileMenu?.classList.contains('hidden')) {
+            toggleMenu();
+          }
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768 && !mobileMenu?.classList.contains('hidden')) {
+          toggleMenu();
+        }
+      });
     </script>
 
     <header
-      class="bg-[var(--color-earth-900)] text-white shadow-lg"
+      class="bg-[var(--color-earth-900)] text-white shadow-lg sticky top-0 z-50"
       role="banner"
     >
-      <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
-        <a
-          href="/"
-          class="flex items-center gap-3 hover:opacity-90 transition-opacity"
-          aria-label="Recetas de Abuela — Ir a la página principal"
-        >
-          <UtensilsCrossed size={32} aria-hidden="true" class="text-amber-300" />
-          <div>
-            <span
-              class="block text-xl font-bold tracking-wide"
-              style="font-family: var(--font-serif);"
-            >
-              Recetas de Abuela
-            </span>
-            <span class="block text-xs text-amber-300 tracking-widest uppercase">
-              Cocina tradicional española
-            </span>
-          </div>
-        </a>
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center justify-between py-4 gap-4">
+          <a
+            href="/"
+            class="flex items-center gap-3 hover:opacity-90 transition-opacity"
+            aria-label="Recetas de Abuela — Ir a la página principal"
+          >
+            <UtensilsCrossed size={32} aria-hidden="true" class="text-amber-300 flex-shrink-0" />
+            <div>
+              <span
+                class="block text-xl font-bold tracking-wide leading-tight"
+                style="font-family: var(--font-serif);"
+              >
+                Recetas de Abuela
+              </span>
+              <span class="block text-[10px] sm:text-xs text-amber-300 tracking-widest uppercase">
+                Cocina tradicional española
+              </span>
+            </div>
+          </a>
 
-        <nav aria-label="Navegación principal">
-          <ul class="flex items-center gap-1 list-none m-0 p-0">
+          <!-- Mobile Menu -->
+          <button
+            type="button"
+            id="mobile-menu-button"
+            class="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-colors"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            aria-label="Abrir menú de navegación"
+          >
+            <span class="text-sm font-bold uppercase tracking-wider">Menú</span>
+            <Menu size={24} id="menu-icon-open" aria-hidden="true" />
+            <X size={24} id="menu-icon-close" aria-hidden="true" class="hidden" />
+          </button>
+
+          <nav class="hidden md:block" aria-label="Navegación principal">
+            <ul class="flex items-center gap-1 list-none m-0 p-0 text-white">
+              <li>
+                <a
+                  href="/"
+                  class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors block"
+                  aria-current={Astro.url.pathname === '/' ? 'page' : undefined}
+                >
+                  Recetas
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/sobre-el-proyecto"
+                  class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors block"
+                  aria-current={Astro.url.pathname === '/sobre-el-proyecto' ? 'page' : undefined}
+                >
+                  El Proyecto
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/sobre-el-proyecto#manda-tu-receta"
+                  class="ml-2 flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white transition-colors"
+                  style="min-height: var(--min-touch-target);"
+                >
+                  <Mic size={16} aria-hidden="true" />
+                  ¡Manda tu receta!
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <!-- Mobile Dropdown -->
+        <nav
+          id="mobile-menu"
+          class="hidden md:hidden pb-6 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-200"
+          aria-label="Navegación móvil"
+        >
+          <ul class="flex flex-col gap-2 list-none m-0 p-0 pt-4">
             <li>
               <a
                 href="/"
-                class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors"
+                class="px-4 py-4 rounded-xl text-lg font-bold hover:bg-white/10 transition-colors block"
                 aria-current={Astro.url.pathname === '/' ? 'page' : undefined}
               >
                 Recetas
@@ -161,19 +252,19 @@ const websiteJsonLd = {
             <li>
               <a
                 href="/sobre-el-proyecto"
-                class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors"
+                class="px-4 py-4 rounded-xl text-lg font-bold hover:bg-white/10 transition-colors block"
                 aria-current={Astro.url.pathname === '/sobre-el-proyecto' ? 'page' : undefined}
               >
                 El Proyecto
               </a>
             </li>
-            <li>
+            <li class="mt-2">
               <a
                 href="/sobre-el-proyecto#manda-tu-receta"
-                class="ml-2 flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white transition-colors"
-                style="min-height: var(--min-touch-target);"
+                id="mobile-manda-tu-receta"
+                class="flex items-center justify-center gap-3 px-4 py-5 rounded-xl text-xl font-black bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white transition-all shadow-lg active:scale-[0.98]"
               >
-                <Mic size={16} aria-hidden="true" />
+                <Mic size={24} aria-hidden="true" />
                 ¡Manda tu receta!
               </a>
             </li>

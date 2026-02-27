@@ -115,9 +115,6 @@ const { tags, totalRecipes } = Astro.props;
       noResultsEl.setAttribute('role', 'status');
       noResultsEl.setAttribute('aria-live', 'polite');
       noResultsEl.innerHTML = `
-        <div class="flex justify-center mb-4 text-stone-300">
-          <UtensilsCrossed size={56} aria-label="nada encontrado" stroke-width={1} />
-        </div>
         <p class="text-xl font-semibold text-stone-600">No hay recetas que coincidan</p>
         <p class="text-base text-stone-400 mt-1">Prueba con otros términos o etiquetas</p>
       `;

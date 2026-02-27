@@ -161,30 +161,30 @@ const formattedDate = date
             aria-label="Detalles de la receta"
           >
             {prep_time && (
-              <div class="text-center">
-                <div class="flex justify-center mb-1 text-stone-400"><Clock size={20} aria-hidden="true" /></div>
-                <span class="block text-xs text-stone-400 mt-0.5">Preparación</span>
-                <span class="block text-sm font-semibold text-[var(--color-earth-900)]">{prep_time}</span>
+              <div class="text-center p-2 rounded-lg hover:bg-white/50 transition-colors">
+                <div class="flex justify-center mb-1 text-stone-400"><Clock size={24} aria-hidden="true" /></div>
+                <span class="block text-xs text-stone-400 font-bold uppercase tracking-tighter">Prep.</span>
+                <span class="block text-sm font-black text-[var(--color-earth-900)] leading-tight">{prep_time}</span>
               </div>
             )}
             {cook_time && (
-              <div class="text-center">
-                <div class="flex justify-center mb-1 text-stone-400"><Flame size={20} aria-hidden="true" /></div>
-                <span class="block text-xs text-stone-400 mt-0.5">Cocción</span>
-                <span class="block text-sm font-semibold text-[var(--color-earth-900)]">{cook_time}</span>
+              <div class="text-center p-2 rounded-lg hover:bg-white/50 transition-colors">
+                <div class="flex justify-center mb-1 text-stone-400"><Flame size={24} aria-hidden="true" /></div>
+                <span class="block text-xs text-stone-400 font-bold uppercase tracking-tighter">Cocción</span>
+                <span class="block text-sm font-black text-[var(--color-earth-900)] leading-tight">{cook_time}</span>
               </div>
             )}
             {servings && (
-              <div class="text-center">
-                <div class="flex justify-center mb-1 text-stone-400"><Users size={20} aria-hidden="true" /></div>
-                <span class="block text-xs text-stone-400 mt-0.5">Raciones</span>
-                <span class="block text-sm font-semibold text-[var(--color-earth-900)]">{servings} personas</span>
+              <div class="text-center p-2 rounded-lg hover:bg-white/50 transition-colors">
+                <div class="flex justify-center mb-1 text-stone-400"><Users size={24} aria-hidden="true" /></div>
+                <span class="block text-xs text-stone-400 font-bold uppercase tracking-tighter">Raciones</span>
+                <span class="block text-sm font-black text-[var(--color-earth-900)] leading-tight">{servings} pers.</span>
               </div>
             )}
-            <div class="text-center">
-              <div class="flex justify-center mb-1 text-stone-400"><BarChart2 size={20} aria-hidden="true" /></div>
-              <span class="block text-xs text-stone-400 mt-0.5">Dificultad</span>
-              <span class={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5 ${difficultyColor}`}>
+            <div class="text-center p-2 rounded-lg hover:bg-white/50 transition-colors">
+              <div class="flex justify-center mb-1 text-stone-400"><BarChart2 size={24} aria-hidden="true" /></div>
+              <span class="block text-xs text-stone-400 font-bold uppercase tracking-tighter">Dificultad</span>
+              <span class={`inline-block text-[10px] font-black px-1.5 py-0.5 rounded uppercase mt-1 ${difficultyColor}`}>
                 {difficulty}
               </span>
             </div>
