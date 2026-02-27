@@ -180,12 +180,12 @@ const allCooks = await getCollection('cooks');
       <!-- CTA email -->
       <a
         href="mailto:recetasdeabuela@proton.me?subject=Receta%20de%20mi%20abuela"
-        class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-xl bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white font-bold text-lg transition-colors"
+        class="inline-flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto px-4 sm:px-8 py-4 rounded-xl bg-[var(--color-terracotta-500)] hover:bg-[var(--color-terracotta-600)] text-white font-bold text-sm sm:text-lg transition-colors overflow-hidden"
         style="min-height: var(--min-touch-target);"
         aria-label="Enviar la receta de tu abuela por correo electrónico"
       >
-        <Mail size={20} aria-hidden="true" />
-        recetasdeabuela@proton.me
+        <Mail size={20} aria-hidden="true" class="flex-shrink-0" />
+        <span class="break-all sm:break-normal">recetasdeabuela@proton.me</span>
       </a>
 
       <p class="text-sm text-stone-500 mt-4">
