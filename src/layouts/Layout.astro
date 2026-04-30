@@ -85,43 +85,7 @@ const websiteJsonLd = {
   <body class="flex flex-col min-h-screen">
     <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-    <div
-      id="dev-banner"
-      role="status"
-      aria-live="polite"
-      class="bg-amber-100 border-b-2 border-amber-300 text-amber-900 text-sm no-print"
-    >
-      <div class="max-w-5xl mx-auto px-4 py-3 flex items-start justify-between gap-4">
-        <p class="leading-snug">
-          <strong class="font-bold">Sitio en desarrollo.</strong>
-          Las recetas y perfiles de cocineras que aparecen ahora mismo han sido generados por IA como contenido de prueba.
-          El contenido real, con recetas auténticas y sus protagonistas, se irá publicando próximamente.
-        </p>
-        <button
-          type="button"
-          id="close-dev-banner"
-          class="flex-shrink-0 p-1 rounded-lg hover:bg-amber-200 transition-colors"
-          aria-label="Cerrar aviso de desarrollo"
-          style="min-width: 2rem; min-height: 2rem;"
-        >
-          <span aria-hidden="true" class="text-lg leading-none">×</span>
-        </button>
-      </div>
-    </div>
-
     <script>
-      const banner = document.getElementById('dev-banner');
-      const closeBtn = document.getElementById('close-dev-banner');
-
-      if (sessionStorage.getItem('devBannerClosed')) {
-        banner?.classList.add('hidden');
-      }
-
-      closeBtn?.addEventListener('click', () => {
-        banner?.classList.add('hidden');
-        sessionStorage.setItem('devBannerClosed', '1');
-      });
-
       const menuButton = document.getElementById('mobile-menu-button');
       const mobileMenu = document.getElementById('mobile-menu');
       const openIcon = document.getElementById('menu-icon-open');

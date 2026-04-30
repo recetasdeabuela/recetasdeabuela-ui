@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { UtensilsCrossed, Timer, MapPin, ChefHat } from '@lucide/astro';
 
 interface Props {
@@ -36,14 +37,15 @@ const displayTime = total_time ?? prep_time;
     aria-hidden="true"
   >
     {image ? (
-      <img
+      <Image
         src={image}
         alt={image_alt ?? title}
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         loading="lazy"
         decoding="async"
-        width="400"
-        height="300"
+        width={400}
+        height={300}
+        format="webp"
       />
     ) : (
       <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--color-cream-100)] to-[var(--color-terracotta-100)] text-[var(--color-terracotta-200)]">

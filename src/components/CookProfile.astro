@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { UserCircle, MapPin } from '@lucide/astro';
 
 interface Props {
@@ -23,13 +24,14 @@ const { name, origin, region, bio, picture_profile_link, born } = cook.data;
 
   <div class="flex items-start gap-4">
     {picture_profile_link ? (
-      <img
+      <Image
         src={picture_profile_link}
         alt={`Fotografía de ${name}`}
         class="w-20 h-20 rounded-full object-cover ring-4 ring-[var(--color-terracotta-100)] flex-shrink-0"
         loading="lazy"
-        width="80"
-        height="80"
+        width={80}
+        height={80}
+        format="webp"
       />
     ) : (
       <div

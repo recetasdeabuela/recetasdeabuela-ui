@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import CookProfile from '../../components/CookProfile.astro';
+import { Image } from 'astro:assets';
 import { Clock, Flame, Users, BarChart2, MapPin, Calendar, Printer } from '@lucide/astro';
 import { getCollection, getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
@@ -45,7 +46,7 @@ function toAbsoluteUrl(url: string | undefined): string | undefined {
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   return new URL(url, siteBase).toString();
 }
-const absoluteImage = toAbsoluteUrl(image);
+const absoluteImage = image ? toAbsoluteUrl(typeof image === 'string' ? image : image.src) : undefined;
 
 function toISO8601Duration(timeStr: string | undefined): string | undefined {
   if (!timeStr) return undefined;
@@ -101,7 +102,7 @@ const formattedDate = date
 <Layout
   title={title}
   description={description}
-  image={image}
+  image={typeof image === 'string' ? image : image?.src}
   imageAlt={image_alt}
   type="article"
   jsonLd={recipeJsonLd}
@@ -127,14 +128,15 @@ const formattedDate = date
 
     {image && (
       <div class="rounded-2xl overflow-hidden mb-8 aspect-[16/7] bg-[var(--color-cream-100)]">
-        <img
+        <Image
           src={image}
           alt={image_alt ?? title}
           class="w-full h-full object-cover"
           loading="eager"
           decoding="async"
-          width="1024"
-          height="448"
+          width={1024}
+          height={448}
+          format="webp"
         />
       </div>
     )}

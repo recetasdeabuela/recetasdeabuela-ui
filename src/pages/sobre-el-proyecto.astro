@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import { UtensilsCrossed, UserCircle, Mic, Volume2, Bot, Mail } from '@lucide/astro';
 import { getCollection } from 'astro:content';
 
@@ -58,13 +59,14 @@ const allCooks = await getCollection('cooks');
         {allCooks.map((cook) => (
           <div class="flex items-center gap-4 bg-[var(--color-cream-50)] rounded-xl p-4 border border-[var(--color-cream-200)]">
             {cook.data.picture_profile_link ? (
-              <img
+              <Image
                 src={cook.data.picture_profile_link}
                 alt={`Fotografía de ${cook.data.name}`}
                 class="w-14 h-14 rounded-full object-cover ring-2 ring-[var(--color-terracotta-100)] flex-shrink-0"
                 loading="lazy"
-                width="56"
-                height="56"
+                width={56}
+                height={56}
+                format="webp"
               />
             ) : (
               <div class="w-14 h-14 rounded-full bg-[var(--color-terracotta-100)] flex items-center justify-center flex-shrink-0 text-[var(--color-terracotta-500)]">
@@ -150,30 +152,19 @@ const allCooks = await getCollection('cooks');
         </ul>
       </div>
 
-      <!-- Qué hacemos con el audio -->
-      <div class="mb-8 bg-white/60 rounded-xl p-5 border border-[var(--color-terracotta-200)]">
-        <h3 class="font-bold text-lg text-[var(--color-earth-900)] mb-3">
-          ¿Qué hacemos con el audio?
+      <!-- Privacidad y Seguridad del audio -->
+      <div class="mb-8 bg-white/60 rounded-xl p-6 border border-[var(--color-terracotta-200)] shadow-sm">
+        <h3 class="font-bold text-lg text-[var(--color-earth-900)] mb-3 flex items-center gap-2">
+          <Volume2 size={20} aria-hidden="true" class="text-[var(--color-terracotta-600)]" />
+          Privacidad y seguridad
         </h3>
         <p class="text-base text-[var(--color-earth-800)] leading-relaxed mb-4">
-          Cuéntanos en el mismo mensaje qué prefieres:
+          Para salvaguardar la seguridad y privacidad de nuestras cocineras, <strong>el audio original nunca se publica</strong>. 
+          De esta forma evitamos que la voz pueda ser clonada o utilizada de forma malintencionada por modelos de IA.
         </p>
-        <div class="space-y-3">
-          <label class="flex items-start gap-3 cursor-default">
-            <Volume2 size={22} aria-hidden="true" class="mt-0.5 flex-shrink-0 text-[var(--color-terracotta-600)]" />
-            <span class="text-base text-[var(--color-earth-800)]">
-              <strong>Publicar el audio.</strong> Lo incluimos en la página de la receta para que cualquiera pueda escucharla en voz de la cocinera. Es la opción más especial.
-            </span>
-          </label>
-          <label class="flex items-start gap-3 cursor-default">
-            <Bot size={22} aria-hidden="true" class="mt-0.5 flex-shrink-0 text-[var(--color-terracotta-600)]" />
-            <span class="text-base text-[var(--color-earth-800)]">
-              <strong>Transcripción con voz de IA.</strong> Transcribimos el audio con IA, sintetizamos los puntos más importantes en una voz generada y publicamos la receta en texto y audio de IA. El audio original no se publica.
-            </span>
-          </label>
-        </div>
-        <p class="text-sm text-stone-500 mt-4">
-          En ningún caso publicaremos el audio sin tu permiso expreso.
+        <p class="text-base text-[var(--color-earth-800)] leading-relaxed">
+          Utilizamos el audio únicamente para realizar la transcripción fiel de la receta y preservar todos sus detalles. 
+          Una vez procesada, la receta se publica exclusivamente en formato texto.
         </p>
       </div>
 

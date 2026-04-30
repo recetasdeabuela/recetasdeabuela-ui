@@ -2,7 +2,7 @@ import { defineCollection, z } from 'astro:content';
 
 const recipes = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     description: z.string(),
     cook_id: z.string().optional(),
@@ -12,7 +12,7 @@ const recipes = defineCollection({
     cook_time: z.string().optional(),
     total_time: z.string().optional(),
     difficulty: z.enum(['fácil', 'media', 'difícil']).default('media'),
-    image: z.string().optional(),
+    image: image().optional(),
     image_alt: z.string().optional(),
     region: z.string().optional(),
     date: z.coerce.date().optional(),
@@ -23,12 +23,12 @@ const recipes = defineCollection({
 
 const cooks = defineCollection({
   type: 'data',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     name: z.string(),
     origin: z.string(),
     region: z.string().optional(),
     bio: z.string().optional(),
-    picture_profile_link: z.string().optional(),
+    picture_profile_link: image().optional(),
     born: z.string().optional(),
   }),
 });
