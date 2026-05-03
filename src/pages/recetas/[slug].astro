@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import CookProfile from '../../components/CookProfile.astro';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { Clock, Flame, Users, BarChart2, MapPin, Calendar, Printer } from '@lucide/astro';
 import { getCollection, getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
@@ -48,6 +48,23 @@ function toAbsoluteUrl(url: string | undefined): string | undefined {
   return new URL(url, siteBase).toString();
 }
 const absoluteImage = image ? toAbsoluteUrl(typeof image === 'string' ? image : image.src) : undefined;
+
+// Optimize image for Open Graph (WhatsApp/Social Media)
+let ogImageUrl = undefined;
+if (image) {
+  if (typeof image === 'string') {
+    ogImageUrl = image;
+  } else {
+    const optimizedOgImage = await getImage({
+      src: image,
+      width: 1200,
+      height: 630,
+      format: 'webp',
+      quality: 80,
+    });
+    ogImageUrl = optimizedOgImage.src;
+  }
+}
 
 function toISO8601Duration(timeStr: string | undefined): string | undefined {
   if (!timeStr) return undefined;
@@ -103,7 +120,7 @@ const formattedDate = date
 <Layout
   title={title}
   description={description}
-  image={typeof image === 'string' ? image : image?.src}
+  image={ogImageUrl}
   imageAlt={image_alt}
   type="article"
   jsonLd={recipeJsonLd}
