@@ -10,7 +10,7 @@ const allCooks = await getCollection('cooks');
 
 <Layout
   title="Sobre el Proyecto"
-  description="El proyecto Recetas de Abuela nace del deseo de preservar la memoria culinaria de España, recogiendo las recetas de las abuelas que alimentaron generaciones."
+  description="El proyecto Recetas de Abuela nace del deseo de preservar la memoria culinaria del mundo, recogiendo las recetas de las abuelas que alimentaron generaciones."
 >
   <div class="max-w-3xl mx-auto px-4 py-12">
 
@@ -25,7 +25,7 @@ const allCooks = await getCollection('cooks');
         Sobre el Proyecto
       </h1>
       <p class="text-lg text-stone-600 leading-relaxed">
-        Un archivo vivo de la cocina casera española.
+        Un archivo vivo de la cocina casera mundial.
       </p>
     </header>
 
@@ -75,7 +75,7 @@ const allCooks = await getCollection('cooks');
             )}
             <div>
               <p class="font-bold text-[var(--color-earth-900)]">{cook.data.name}</p>
-              <p class="text-sm text-stone-500">{cook.data.origin}</p>
+              <p class="text-sm text-stone-500">{cook.data.origin}{cook.data.country ? `, ${cook.data.country}` : ''}</p>
             </div>
           </div>
         ))}

@@ -1,7 +1,7 @@
 {
   "name": "recetas-de-abuela",
   "version": "1.0.0",
-  "description": "Recetas tradicionales de abuelas españolas. Preservando la memoria histórica culinaria.",
+  "description": "Recetas tradicionales de abuelas de todo el mundo. Preservando la memoria histórica culinaria global.",
   "private": true,
   "type": "module",
   "scripts": {

@@ -7,7 +7,7 @@
 
 ## Resumen del Proyecto
 
-Sitio web estático para preservar recetas tradicionales de abuelas españolas.
+Sitio web estático para preservar recetas tradicionales de abuelas de todo el mundo.
 Construido con Astro 5 (output estático, coste 0), Tailwind CSS v4 y Docker.
 
 ---

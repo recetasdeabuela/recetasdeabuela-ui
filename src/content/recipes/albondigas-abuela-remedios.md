@@ -9,6 +9,7 @@ cook_time: "25 minutos"
 total_time: "45 minutos (más tiempo de reposo)"
 difficulty: "media"
 region: "Andalucía (Málaga)"
+country: "España"
 featured: false
 date: 2026-04-30
 image: "./albondigas-remedios.jpg"

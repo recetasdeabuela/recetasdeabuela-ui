@@ -1,6 +1,6 @@
 # 🫕 Recetas de Abuela
 
-> Un archivo vivo de la cocina casera española. Recetas auténticas de abuelas, preservadas para que no se pierdan.
+> Un archivo vivo de la cocina casera mundial. Recetas auténticas de abuelas, preservadas para que no se pierdan.
 
 **🌐 Sitio web:** [https://recetasdeabuela.es/](https://recetasdeabuela.es/)
 
@@ -8,7 +8,7 @@
 
 ## ¿Qué es este proyecto?
 
-**Recetas de Abuela** es un sitio web estático construido con [Astro](https://astro.build) que recopila y preserva recetas tradicionales de abuelas españolas. El foco está en la **memoria histórica culinaria** y en la **accesibilidad**, especialmente para personas mayores.
+**Recetas de Abuela** es un sitio web estático construido con [Astro](https://astro.build) que recopila y preserva recetas tradicionales de abuelas de todo el mundo. El foco está en la **memoria histórica culinaria** y en la **accesibilidad**, especialmente para personas mayores.
 
 ### Características
 

@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { recipe, cookName } = Astro.props;
-const { title, description, tags, prep_time, total_time, difficulty, image, image_alt, region } = recipe.data;
+const { title, description, tags, prep_time, total_time, difficulty, image, image_alt, region, country } = recipe.data;
 
 const difficultyColors: Record<string, string> = {
   'fácil': 'bg-green-100 text-green-800',
@@ -105,10 +105,10 @@ const displayTime = total_time ?? prep_time;
         {difficulty}
       </span>
 
-      {region && (
-        <span class="flex items-center gap-1.5 text-stone-500" aria-label={`Región: ${region}`}>
+      {(region || country) && (
+        <span class="flex items-center gap-1.5 text-stone-500" aria-label={`Ubicación: ${region || ''}${region && country ? ', ' : ''}${country || ''}`}>
           <MapPin size={14} aria-hidden="true" />
-          <span>{region}</span>
+          <span>{region}{region && country ? ', ' : ''}{country}</span>
         </span>
       )}
 

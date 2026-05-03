@@ -13,15 +13,15 @@ interface Props {
 
 const {
   title,
-  description = 'Un tesoro de recetas tradicionales españolas, preservando la memoria culinaria de nuestras abuelas.',
+  description = 'Un tesoro de recetas tradicionales del mundo, preservando la memoria culinaria de nuestras abuelas.',
   image,
-  imageAlt = 'Recetas de Abuela — cocina tradicional española',
+  imageAlt = 'Recetas de Abuela — cocina tradicional mundial',
   type = 'website',
   jsonLd,
 } = Astro.props;
 
 const siteTitle = 'Recetas de Abuela';
-const siteDescription = 'Un tesoro de recetas tradicionales españolas, preservando la memoria culinaria de nuestras abuelas.';
+const siteDescription = 'Un tesoro de recetas tradicionales del mundo, preservando la memoria culinaria de nuestras abuelas.';
 const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
 
 const siteBase = Astro.site ?? new URL('http://localhost:4321');
@@ -253,7 +253,7 @@ const websiteJsonLd = {
           Recetas de Abuela
         </p>
         <p class="text-sm text-stone-400 mb-4">
-          Preservando la memoria culinaria de España, receta a receta.
+          Preservando la memoria culinaria del mundo, receta a receta.
         </p>
         <p class="text-xs text-stone-500">
           Contenido compartido con cariño. Hecho con

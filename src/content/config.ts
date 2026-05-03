@@ -14,6 +14,7 @@ const recipes = defineCollection({
     difficulty: z.enum(['fácil', 'media', 'difícil']).default('media'),
     image: image().optional(),
     image_alt: z.string().optional(),
+    country: z.string().default('España'),
     region: z.string().optional(),
     date: z.coerce.date().optional(),
     featured: z.boolean().default(false),
@@ -25,6 +26,7 @@ const cooks = defineCollection({
   type: 'data',
   schema: ({ image }) => z.object({
     name: z.string(),
+    country: z.string().default('España'),
     origin: z.string(),
     region: z.string().optional(),
     bio: z.string().optional(),

@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { cook } = Astro.props;
-const { name, origin, region, bio, picture_profile_link, born } = cook.data;
+const { name, origin, region, country, bio, picture_profile_link, born } = cook.data;
 ---
 
 <aside
@@ -50,7 +50,7 @@ const { name, origin, region, bio, picture_profile_link, born } = cook.data;
       <p class="text-sm text-stone-500 mt-1 flex items-center gap-1">
         <MapPin size={13} aria-hidden="true" class="flex-shrink-0" />
         <span>
-          {region ? `${origin}, ${region}` : origin}
+          {origin}{region ? `, ${region}` : ''}{country ? `, ${country}` : ''}
         </span>
       </p>
 

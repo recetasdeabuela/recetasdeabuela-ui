@@ -34,6 +34,7 @@ const {
   image,
   image_alt,
   region,
+  country,
   date,
   ingredients,
 } = recipe.data;
@@ -221,10 +222,10 @@ const formattedDate = date
 
         <!-- Footer meta -->
         <div class="mt-8 flex items-center flex-wrap gap-4 text-sm text-stone-400">
-          {region && (
+          {(region || country) && (
             <span class="flex items-center gap-1.5">
               <MapPin size={14} aria-hidden="true" />
-              {region}
+              {region}{region && country ? ', ' : ''}{country}
             </span>
           )}
           {formattedDate && (
